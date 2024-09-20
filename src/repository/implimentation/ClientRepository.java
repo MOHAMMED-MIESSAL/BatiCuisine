@@ -37,12 +37,13 @@ public class ClientRepository implements ClientRepositoryInterface {
     @Override
     public Client getClientById(int id) {
         String query = "SELECT * FROM client WHERE id = ?";
+        Client client = null;
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                return new Client(
+               client =  new Client(
                         resultSet.getInt("id"),
                         resultSet.getString("name"),
                         resultSet.getString("address"),
@@ -55,7 +56,7 @@ public class ClientRepository implements ClientRepositoryInterface {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return client;
     }
 
     @Override

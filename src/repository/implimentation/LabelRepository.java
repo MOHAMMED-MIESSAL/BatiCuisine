@@ -97,6 +97,8 @@ public class LabelRepository implements LabelRepositoryInterface {
                         resultSet.getDouble("hours_work"),
                         resultSet.getDouble("worker_productivity")
                 );
+            }else {
+                System.out.println("No Label found with id: " + id);
             }
         } catch (SQLException e) {
             e.printStackTrace();

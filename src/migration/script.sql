@@ -53,6 +53,6 @@ CREATE TABLE estimate (
                           amount_estimate NUMERIC(10, 2),
                           date_emission   DATE,
                           date_validity   DATE,
-                          accepted        BOOLEAN,
+                          is_accepted        BOOLEAN,
                           project_id      INTEGER REFERENCES project(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
