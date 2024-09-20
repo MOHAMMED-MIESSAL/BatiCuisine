@@ -40,7 +40,7 @@ CREATE TABLE material (
 ) INHERITS (component);
 
 -- Table manPower
-CREATE TABLE man_power (
+CREATE TABLE label (
                            id                  SERIAL PRIMARY KEY,
                            hourly_rate         NUMERIC(10, 2),
                            hours_work          NUMERIC(10, 2),
