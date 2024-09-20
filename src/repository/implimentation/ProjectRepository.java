@@ -25,7 +25,7 @@ public class ProjectRepository implements ProjectRepositoryInterface {
 
     @Override
     public void addProject(Project project) {
-        String query = "INSERT INTO project (name, profit_margin, state_project, total_cost, client_id) VALUES (?, ?, ?::state_project, ?, ?)";
+        String query = "INSERT INTO project (name, profit_margin, state_project, total_cost, client_id) VALUES (?, ?, ?::project_status, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, project.getName());
             statement.setDouble(2, project.getProfit_margin());
@@ -62,7 +62,7 @@ public class ProjectRepository implements ProjectRepositoryInterface {
     }
 
     @Override
-    public void updateProject(Project project) {
+    public void updateProject(int id ,Project project) {
         String query = "UPDATE project SET name = ?, profit_margin = ?, state_project = ?::project_status, total_cost = ?, client_id = ? WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, project.getName());
@@ -70,7 +70,7 @@ public class ProjectRepository implements ProjectRepositoryInterface {
             statement.setString(3, project.getState_project().name()); // Conversion Enum to String
             statement.setDouble(4, project.getTotal_cost());
             statement.setInt(5, project.getClient_id());
-            statement.setInt(6, project.getId());
+            statement.setInt(6, id);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -95,15 +95,19 @@ public class ProjectRepository implements ProjectRepositoryInterface {
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
 
-            while (resultSet.next()) {
-                projects.add(new Project(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getDouble("profit_margin"),
-                        ProjectStatus.valueOf(resultSet.getString("state_project")), // Conversion String to Enum
-                        resultSet.getDouble("total_cost"),
-                        resultSet.getInt("client_id")
-                ));
+            if (!resultSet.next()) {
+                System.out.println("No data found");
+            } else {
+                do {
+                    projects.add(new Project(
+                            resultSet.getInt("id"),
+                            resultSet.getString("name"),
+                            resultSet.getDouble("profit_margin"),
+                            ProjectStatus.valueOf(resultSet.getString("state_project")), // Conversion String to Enum
+                            resultSet.getDouble("total_cost"),
+                            resultSet.getInt("client_id")
+                    ));
+                } while (resultSet.next());
             }
         } catch (SQLException e) {
             e.printStackTrace();

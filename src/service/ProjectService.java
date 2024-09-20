@@ -24,8 +24,8 @@ public class ProjectService {
         return projectRepository.getAllProjects();
     }
 
-    public void updateProject(Project project) {
-        projectRepository.updateProject(project);
+    public void updateProject(int id,Project project) {
+        projectRepository.updateProject(id,project);
     }
 
     public void deleteProject(int id) {

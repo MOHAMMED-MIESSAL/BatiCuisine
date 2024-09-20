@@ -8,6 +8,6 @@ public interface ProjectRepositoryInterface {
     void addProject(Project project);
     Project getProjectById(int id);
     List<Project> getAllProjects();
-    void updateProject(Project project);
+    void updateProject(int id,Project project);
     void deleteProject(int id);
 }

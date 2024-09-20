@@ -1,5 +1,5 @@
 -- ENUM for Project Status :
-CREATE TYPE project_status AS ENUM ('En cours', 'Terminé', 'Annulé');
+CREATE TYPE project_status AS ENUM ('InPROGRESS', 'COMPLETED', 'CANCELED');
 
 
 -- Table client
@@ -26,7 +26,8 @@ CREATE TABLE component (
                            id              SERIAL PRIMARY KEY,
                            name            VARCHAR(50) NOT NULL,
                            type_component  VARCHAR(20) NOT NULL, -- Material || manPower
-                           vat_rate        NUMERIC(5, 2)
+                           vat_rate        NUMERIC(5, 2),
+                           project_id      INTEGER REFERENCES project(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Table material
