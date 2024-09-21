@@ -20,11 +20,11 @@ public class Project {
     }
 
 
+    // Getters and Setters
 
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -32,7 +32,6 @@ public class Project {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -40,7 +39,6 @@ public class Project {
     public double getProfit_margin() {
         return profit_margin;
     }
-
     public void setProfit_margin(double profit_margin) {
         this.profit_margin = profit_margin;
     }
@@ -48,7 +46,6 @@ public class Project {
     public ProjectStatus getState_project() {
         return state_project;
     }
-
     public void setState_project(ProjectStatus state_project) {
         this.state_project = state_project;
     }
@@ -56,7 +53,6 @@ public class Project {
     public double getTotal_cost() {
         return total_cost;
     }
-
     public void setTotal_cost(double total_cost) {
         this.total_cost = total_cost;
     }
@@ -64,11 +60,11 @@ public class Project {
     public int getClient_id() {
         return client_id;
     }
-
     public void setClient_id(int client_id) {
         this.client_id = client_id;
     }
 
+    // toString
     @Override
     public String toString() {
         return "Project {id=" + id + ", name='" + name + '\'' + ", profitMargin=" + profit_margin +

@@ -1,13 +1,12 @@
 package service;
 
 import model.Material;
-import repository.implimentation.MaterialRepository;
 import repository.interfaces.MaterialRepositoryInterface;
 
 import java.util.List;
 
 public class MaterialService {
-    private MaterialRepositoryInterface materialRepository;
+    private final MaterialRepositoryInterface materialRepository;
 
     public MaterialService(MaterialRepositoryInterface materialRepository) {
         this.materialRepository = materialRepository;

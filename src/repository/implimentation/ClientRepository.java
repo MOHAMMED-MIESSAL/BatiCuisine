@@ -10,98 +10,78 @@ import java.util.List;
 
 public class ClientRepository implements ClientRepositoryInterface {
 
-    private Connection connection;
+    private final Connection connection;
 
-    public ClientRepository() {
-        try {
-            this.connection = dbConnection.getInstance().getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public ClientRepository() throws SQLException {
+        this.connection = dbConnection.getInstance().getConnection();
     }
 
     @Override
     public void addClient(Client client) {
         String query = "INSERT INTO client (name, address, phone, is_professional) VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, client.getName());
-            statement.setString(2, client.getAddress());
-            statement.setString(3, client.getPhone());
-            statement.setBoolean(4, client.isIs_professional());
+            setClientFields(statement, client);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logError("Error adding client", e);
         }
     }
 
     @Override
     public Client getClientById(int id) {
         String query = "SELECT * FROM client WHERE id = ?";
-        Client client = null;
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
-
             if (resultSet.next()) {
-               client =  new Client(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("address"),
-                        resultSet.getString("phone"),
-                        resultSet.getBoolean("is_professional")
-                );
-            }else {
+                return buildClientFromResultSet(resultSet);
+            } else {
                 System.out.println("No Client found with id: " + id);
+                return null;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logError("Error fetching client with id: " + id, e);
+            return null;
         }
-        return client;
     }
 
     @Override
     public List<Client> getAllClients() {
-        List<Client> clientList = new ArrayList<>();
         String query = "SELECT * FROM client";
+        List<Client> clientList = new ArrayList<>();
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
 
-            if (!resultSet.next()) {
-                System.out.println("No data found");
-            } else {
-                do {
-                    Client client = new Client(
-                            resultSet.getInt("id"),
-                            resultSet.getString("name"),
-                            resultSet.getString("address"),
-                            resultSet.getString("phone"),
-                            resultSet.getBoolean("is_professional")
-                    );
-                    clientList.add(client);
-                } while (resultSet.next());
+            while (resultSet.next()) {
+                clientList.add(buildClientFromResultSet(resultSet));
+            }
+
+            if (clientList.isEmpty()) {
+                System.out.println("No clients found.");
             }
 
         } catch (SQLException e) {
-            System.err.println("Error fetching clients: " + e.getMessage());
-            e.printStackTrace();
+            logError("Error fetching all clients", e);
         }
 
         return clientList;
     }
 
     @Override
-    public void updateClient(int id,Client client) {
+    public void updateClient(int id, Client client) {
         String query = "UPDATE client SET name = ?, address = ?, phone = ?, is_professional = ? WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, client.getName());
-            statement.setString(2, client.getAddress());
-            statement.setString(3, client.getPhone());
-            statement.setBoolean(4, client.isIs_professional());
-            statement.setInt(5,id);
-            statement.executeUpdate();
+            setClientFields(statement, client);
+            statement.setInt(5, id);
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected == 0) {
+                System.out.println("No client found with id: " + id);
+            }
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            logError("Error updating client with id: " + id, e);
         }
     }
 
@@ -110,11 +90,41 @@ public class ClientRepository implements ClientRepositoryInterface {
         String query = "DELETE FROM client WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
-            statement.executeUpdate();
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected == 0) {
+                System.out.println("No client found with id: " + id);
+            }
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            logError("Error deleting client with id: " + id, e);
         }
     }
 
 
+
+    // Helper method to log errors
+    private void logError(String message, SQLException e) {
+        System.err.println(message + ": " + e.getMessage());
+        // Optional: Use a logging framework like Log4j or SLF4J instead of System.err
+    }
+
+    // Helper method to set the client fields in a PreparedStatement
+    private void setClientFields(PreparedStatement statement, Client client) throws SQLException {
+        statement.setString(1, client.getName());
+        statement.setString(2, client.getAddress());
+        statement.setString(3, client.getPhone());
+        statement.setBoolean(4, client.isIs_professional());
+    }
+
+    // Helper method to build a Client object from a ResultSet
+    private Client buildClientFromResultSet(ResultSet resultSet) throws SQLException {
+        return new Client(
+                resultSet.getInt("id"),
+                resultSet.getString("name"),
+                resultSet.getString("address"),
+                resultSet.getString("phone"),
+                resultSet.getBoolean("is_professional")
+        );
+    }
 }

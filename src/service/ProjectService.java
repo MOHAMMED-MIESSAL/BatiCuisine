@@ -6,7 +6,7 @@ import repository.interfaces.ProjectRepositoryInterface;
 import java.util.List;
 
 public class ProjectService {
-    private ProjectRepositoryInterface projectRepository;
+    private final ProjectRepositoryInterface projectRepository;
 
     public ProjectService(ProjectRepositoryInterface projectRepository) {
         this.projectRepository = projectRepository;

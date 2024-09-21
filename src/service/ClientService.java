@@ -6,30 +6,29 @@ import repository.interfaces.ClientRepositoryInterface;
 import java.util.List;
 
 public class ClientService {
-    private ClientRepositoryInterface userRepository;
+    private final ClientRepositoryInterface clientRepository;
 
-    public ClientService(ClientRepositoryInterface userRepository) {
-
-        this.userRepository = userRepository;
+    public ClientService(ClientRepositoryInterface clientRepository) {
+        this.clientRepository = clientRepository;
     }
 
     public void addClient(Client client) {
-        userRepository.addClient(client);
+        clientRepository.addClient(client);
     }
 
     public Client getClientById(int id) {
-        return userRepository.getClientById(id);
+        return clientRepository.getClientById(id);
     }
 
     public List<Client> getAllClients() {
-        return userRepository.getAllClients();
+        return clientRepository.getAllClients();
     }
 
-    public void updateClient(int id,Client client) {
-        userRepository.updateClient(id,client);
+    public void updateClient(int id, Client client) {
+        clientRepository.updateClient(id, client);
     }
 
     public void deleteClient(int id) {
-        userRepository.deleteClient(id);
+        clientRepository.deleteClient(id);
     }
 }

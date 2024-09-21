@@ -17,7 +17,6 @@ public class Label extends Component {
     public double getHourly_rate() {
         return hourly_rate;
     }
-
     public void setHourly_rate(double hourly_rate) {
         this.hourly_rate = hourly_rate;
     }
@@ -25,7 +24,6 @@ public class Label extends Component {
     public double getHours_work() {
         return hours_work;
     }
-
     public void setHours_work(double hours_work) {
         this.hours_work = hours_work;
     }
@@ -33,11 +31,11 @@ public class Label extends Component {
     public double getWorker_productivity() {
         return worker_productivity;
     }
-
     public void setWorker_productivity(double worker_productivity) {
         this.worker_productivity = worker_productivity;
     }
 
+    // toString
     @Override
     public String toString() {
         return "Label{" +

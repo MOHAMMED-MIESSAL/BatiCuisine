@@ -12,43 +12,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LabelRepository implements LabelRepositoryInterface {
-    private Connection connection;
+    private final Connection connection;
 
-    public LabelRepository() {
-        try {
-            this.connection = dbConnection.getInstance().getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public LabelRepository() throws SQLException {
+        this.connection = dbConnection.getInstance().getConnection();
     }
 
     @Override
     public void addLabel(Label label) {
-        String queryMaterial = "INSERT INTO label (id, name, type_component, vat_rate, project_id, hourly_rate, hours_work, worker_productivity) "
-                + "VALUES (DEFAULT, ?, 'Label', ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmtLabel = connection.prepareStatement(queryMaterial, PreparedStatement.RETURN_GENERATED_KEYS)) {
-
-            stmtLabel.setString(1, label.getName());
-            stmtLabel.setDouble(2, label.getVat_rate());
-            stmtLabel.setInt(3, label.getProject_id());
-            stmtLabel.setDouble(4, label.getHourly_rate());
-            stmtLabel.setDouble(5, label.getHours_work());
-            stmtLabel.setDouble(6, label.getWorker_productivity());
-            stmtLabel.executeUpdate();
-
+        String sql = "INSERT INTO label (name, type_component, vat_rate, project_id, hourly_rate, hours_work, worker_productivity) "
+                + "VALUES (?, 'Label', ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            setLabelFields(stmt, label);
+            stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logError("Error adding label", e);
         }
     }
 
     @Override
     public void deleteLabel(int id) {
-        String query = "DELETE FROM label WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        String sql = "DELETE FROM label WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
-            statement.executeUpdate();
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("No Label found with id: " + id);
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logError("Error deleting label with id: " + id, e);
         }
     }
 
@@ -57,22 +49,19 @@ public class LabelRepository implements LabelRepositoryInterface {
         String sql = "SELECT * FROM label";
         List<Label> labels = new ArrayList<>();
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
-                Label label = new Label(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getInt("project_id"),
-                        rs.getDouble("vat_rate"),
-                        rs.getDouble("hourly_rate"),
-                        rs.getDouble("hours_work"),
-                        rs.getDouble("worker_productivity")
-                );
-                labels.add(label);
+                labels.add(buildLabelFromResultSet(rs));
             }
+
+            if (labels.isEmpty()) {
+                System.out.println("No Labels found");
+            }
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            logError("Error fetching all labels", e);
         }
 
         return labels;
@@ -80,48 +69,67 @@ public class LabelRepository implements LabelRepositoryInterface {
 
     @Override
     public Label getLabelById(int id) {
-        String query = "SELECT * FROM label WHERE id = ?";
+        String sql = "SELECT * FROM label WHERE id = ?";
         Label label = null;
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                 label = new Label(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getInt("project_id"),
-                        resultSet.getDouble("vat_rate"),
-                        resultSet.getDouble("hourly_rate"),
-                        resultSet.getDouble("hours_work"),
-                        resultSet.getDouble("worker_productivity")
-                );
-            }else {
+                label = buildLabelFromResultSet(resultSet);
+            } else {
                 System.out.println("No Label found with id: " + id);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logError("Error fetching label with id: " + id, e);
         }
+
         return label;
     }
 
     @Override
-    public void updateLabel(int id,Label label) {
-        String query = "UPDATE label SET name = ?, vat_rate = ?, project_id = ?, hourly_rate = ?, hours_work = ?, worker_productivity = ? WHERE id = ?";
-
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, label.getName());
-            statement.setDouble(2, label.getVat_rate());
-            statement.setInt(3, label.getProject_id());
-            statement.setDouble(4, label.getHourly_rate());
-            statement.setDouble(5, label.getHours_work());
-            statement.setDouble(6, label.getWorker_productivity());
+    public void updateLabel(int id, Label label) {
+        String sql = "UPDATE label SET name = ?, vat_rate = ?, project_id = ?, hourly_rate = ?, hours_work = ?, worker_productivity = ? WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            setLabelFields(statement, label);
             statement.setInt(7, id);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+            int rowsAffected = statement.executeUpdate();
 
+            if (rowsAffected == 0) {
+                System.out.println("No Label found with id: " + id);
+            }
+        } catch (SQLException e) {
+            logError("Error updating label with id: " + id, e);
+        }
+    }
+
+    // Helper method to log errors
+    private void logError(String message, SQLException e) {
+        System.err.println(message + ": " + e.getMessage());
+        // Optional: Use a logging framework like Log4j or SLF4J instead of System.err
+    }
+
+    // Helper method to set the fields for a Label in a PreparedStatement
+    private void setLabelFields(PreparedStatement statement, Label label) throws SQLException {
+        statement.setString(1, label.getName());
+        statement.setDouble(2, label.getVat_rate());
+        statement.setInt(3, label.getProject_id());
+        statement.setDouble(4, label.getHourly_rate());
+        statement.setDouble(5, label.getHours_work());
+        statement.setDouble(6, label.getWorker_productivity());
+    }
+
+    // Helper method to build a Label object from a ResultSet
+    private Label buildLabelFromResultSet(ResultSet resultSet) throws SQLException {
+        return new Label(
+                resultSet.getInt("id"),
+                resultSet.getString("name"),
+                resultSet.getInt("project_id"),
+                resultSet.getDouble("vat_rate"),
+                resultSet.getDouble("hourly_rate"),
+                resultSet.getDouble("hours_work"),
+                resultSet.getDouble("worker_productivity")
+        );
     }
 }

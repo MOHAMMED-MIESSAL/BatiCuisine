@@ -6,7 +6,7 @@ import repository.interfaces.LabelRepositoryInterface;
 import java.util.List;
 
 public class LabelService {
-    private LabelRepositoryInterface labelRepository;
+    private final LabelRepositoryInterface labelRepository;
 
     public LabelService(LabelRepositoryInterface labelRepository) {
         this.labelRepository = labelRepository;

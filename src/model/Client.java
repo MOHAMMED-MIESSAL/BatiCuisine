@@ -1,7 +1,5 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Client {
     private int id;
@@ -10,8 +8,6 @@ public class Client {
     private String phone;
     private boolean is_professional;
 
-    // Liste Project
-    private List<Project> projects;
 
     public Client(int id, String name, String address, String phone, boolean is_professional) {
         this.id = id;
@@ -19,14 +15,12 @@ public class Client {
         this.address = address;
         this.phone = phone;
         this.is_professional = is_professional;
-        this.projects = new ArrayList<>();
     }
 
     // Getters et setters
     public String getAddress() {
         return address;
     }
-
     public void setAddress(String address) {
         this.address = address;
     }
@@ -34,7 +28,6 @@ public class Client {
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -42,7 +35,6 @@ public class Client {
     public boolean isIs_professional() {
         return is_professional;
     }
-
     public void setIs_professional(boolean is_professional) {
         this.is_professional = is_professional;
     }
@@ -50,7 +42,6 @@ public class Client {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -58,27 +49,19 @@ public class Client {
     public String getPhone() {
         return phone;
     }
-
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
-    public List<Project> getProjects() {
-        return projects;
-    }
 
-    public void setProjects(List<Project> projects) {
-        this.projects = projects;
-    }
 
-    // Getters et setters //
-
+    // to string
     @Override
     public String toString() {
         return "Client {id=" + id + ", name='" + name + '\'' +
                 ", address='" + address + '\'' + ", phone='" +
                 phone + '\'' + ", is_professional=" +
-                is_professional + '\'' + ", projects=" + projects + '}';
+                is_professional + '}';
     }
 }
 
