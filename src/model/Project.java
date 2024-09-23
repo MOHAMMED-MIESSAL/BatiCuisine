@@ -2,29 +2,39 @@ package model;
 
 import enums.ProjectStatus;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Project {
     private int id;
     private String name;
-    private double profit_margin;
-    private double total_cost;
-    private ProjectStatus state_project;
+    private Double profit_margin; // Utilisation de Double pour gérer les valeurs null
+    private Double total_cost;    // Utilisation de Double pour gérer les valeurs null
+    private ProjectStatus state_project = ProjectStatus.InPROGRESS; // Valeur par défaut
     private int client_id;
+    // Map to store components with keys "material" and "labor"
+    private Map<Class<?>, List<?>> components;
 
-    public Project( int id, String name, double profit_margin, ProjectStatus state_project, double total_cost ,int client_id) {
+    public Project(int id, String name, Double profit_margin, ProjectStatus state_project, Double total_cost, int client_id) {
         this.id = id;
         this.name = name;
-        this.profit_margin = profit_margin;
-        this.state_project = state_project;
-        this.total_cost = total_cost;
+        this.profit_margin = (profit_margin != null) ? profit_margin : 0.0;
+        this.state_project = (state_project != null) ? state_project : ProjectStatus.InPROGRESS;
+        this.total_cost = (total_cost != null) ? total_cost : 0.0;
         this.client_id = client_id;
+        this.components = new HashMap<>();
+        this.components.put(Material.class, new ArrayList<>()); // List for materials
+        this.components.put(Labor.class, new ArrayList<>()); // List for labor
     }
-
 
     // Getters and Setters
 
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -32,13 +42,15 @@ public class Project {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public double getProfit_margin() {
+    public Double getProfit_margin() {
         return profit_margin;
     }
+
     public void setProfit_margin(double profit_margin) {
         this.profit_margin = profit_margin;
     }
@@ -46,13 +58,15 @@ public class Project {
     public ProjectStatus getState_project() {
         return state_project;
     }
+
     public void setState_project(ProjectStatus state_project) {
         this.state_project = state_project;
     }
 
-    public double getTotal_cost() {
+    public Double getTotal_cost() {
         return total_cost;
     }
+
     public void setTotal_cost(double total_cost) {
         this.total_cost = total_cost;
     }
@@ -60,9 +74,46 @@ public class Project {
     public int getClient_id() {
         return client_id;
     }
+
     public void setClient_id(int client_id) {
         this.client_id = client_id;
     }
+
+    // Generic method to add either Material or Labor
+    public <T> void addComponent(T component) {
+        List<T> componentList = (List<T>) components.get(component.getClass());
+        if (componentList != null) {
+            componentList.add(component);
+        } else {
+            System.out.println("Invalid component type.");
+        }
+    }
+
+    // Removing a material
+    public void removeMaterial(Material material) {
+        List<Material> materials = (List<Material>) this.components.get("material");
+        if (materials.remove(material)) {
+            System.out.println("Matériau retiré avec succès !");
+        } else {
+            System.out.println("Matériau non trouvé.");
+        }
+    }
+
+    // Removing labor
+    public void removeLabor(Labor labor) {
+        List<Labor> laborList = (List<Labor>) this.components.get("labor");
+        if (laborList.remove(labor)) {
+            System.out.println("Main-d'œuvre retirée avec succès !");
+        } else {
+            System.out.println("Main-d'œuvre non trouvée.");
+        }
+    }
+
+    // Get all components
+    public Map<Class<?>, List<?>> getComponents() {
+        return components;
+    }
+
 
     // toString
     @Override

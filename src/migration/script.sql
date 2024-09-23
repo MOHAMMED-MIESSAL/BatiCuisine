@@ -40,11 +40,11 @@ CREATE TABLE material (
 ) INHERITS (component);
 
 -- Table manPower
-CREATE TABLE label (
-                           id                  SERIAL PRIMARY KEY,
-                           hourly_rate         NUMERIC(10, 2),
-                           hours_work          NUMERIC(10, 2),
-                           worker_productivity  NUMERIC(5, 2)
+CREATE TABLE labor (
+                       id                  SERIAL PRIMARY KEY,
+                       hourly_rate         NUMERIC(10, 2),
+                       hours_work          NUMERIC(10, 2),
+                       worker_productivity  NUMERIC(5, 2)
 ) INHERITS (component);
 
 -- Table quotes
@@ -53,6 +53,11 @@ CREATE TABLE estimate (
                           amount_estimate NUMERIC(10, 2),
                           date_emission   DATE,
                           date_validity   DATE,
-                          is_accepted        BOOLEAN,
+                          is_accepted     BOOLEAN,
                           project_id      INTEGER REFERENCES project(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+
+
+ALTER TABLE project
+    ALTER COLUMN state_project SET DEFAULT 'InPROGRESS'::project_status;

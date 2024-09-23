@@ -9,5 +9,6 @@ public interface ClientRepositoryInterface {
     List<Client> getAllClients();
     void updateClient(int id ,Client client);
     void deleteClient(int id);
+    Client getClientByName(String name);
 
 }

@@ -30,19 +30,19 @@ public class ClientRepository implements ClientRepositoryInterface {
     @Override
     public Client getClientById(int id) {
         String query = "SELECT * FROM client WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        Client client = null;
+        try(PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return buildClientFromResultSet(resultSet);
+                client = buildClientFromResultSet(resultSet);
             } else {
-                System.out.println("No Client found with id: " + id);
-                return null;
+                System.out.println("No client found with id: " + id);
             }
         } catch (SQLException e) {
             logError("Error fetching client with id: " + id, e);
-            return null;
         }
+        return client;
     }
 
     @Override
@@ -101,7 +101,24 @@ public class ClientRepository implements ClientRepositoryInterface {
         }
     }
 
+    public Client getClientByName(String name) {
+        String query = "SELECT * FROM client WHERE name = ? ";
+        Client client = null;
+        try(PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                client = buildClientFromResultSet(resultSet);
+            }
+//            else {
+//                System.out.println("No client found with name: " + name);
+//            }
+        } catch (SQLException e) {
+            logError("Error fetching client with name: " + name, e);
+        }
+        return client;
 
+    }
 
     // Helper method to log errors
     private void logError(String message, SQLException e) {

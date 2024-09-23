@@ -121,12 +121,12 @@ public class MaterialRepository implements MaterialRepositoryInterface {
         return new Material(
                 resultSet.getInt("id"),
                 resultSet.getString("name"),
-                resultSet.getInt("project_id"),
                 resultSet.getDouble("vat_rate"),
                 resultSet.getDouble("unit_cost"),
                 resultSet.getDouble("quantity"),
                 resultSet.getDouble("transport_cost"),
-                resultSet.getDouble("coefficient_quality")
+                resultSet.getDouble("coefficient_quality"),
+                resultSet.getInt("project_id")
         );
     }
 }

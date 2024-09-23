@@ -1,34 +1,34 @@
 package service;
 
-import model.Label;
-import repository.interfaces.LabelRepositoryInterface;
+import model.Labor;
+import repository.interfaces.LaborRepositoryInterface;
 
 import java.util.List;
 
 public class LabelService {
-    private final LabelRepositoryInterface labelRepository;
+    private final LaborRepositoryInterface labelRepository;
 
-    public LabelService(LabelRepositoryInterface labelRepository) {
+    public LabelService(LaborRepositoryInterface labelRepository) {
         this.labelRepository = labelRepository;
     }
 
-    public void addLabel(Label label) {
-        labelRepository.addLabel(label);
+    public void addLabel(Labor labor) {
+        labelRepository.addLabor(labor);
     }
 
-    public Label getLabelById(int id) {
-        return labelRepository.getLabelById(id);
+    public Labor getLabelById(int id) {
+        return labelRepository.getLaborById(id);
     }
 
-    public List<Label> getAllLabels() {
-        return labelRepository.getAllLabels();
+    public List<Labor> getAllLabels() {
+        return labelRepository.getAllLabors();
     }
 
-    public void updateLabel(int id,Label label) {
-        labelRepository.updateLabel(id,label);
+    public void updateLabel(int id, Labor labor) {
+        labelRepository.updateLabor(id, labor);
     }
 
     public void deleteLabel(int id) {
-        labelRepository.deleteLabel(id);
+        labelRepository.deleteLabor(id);
     }
 }

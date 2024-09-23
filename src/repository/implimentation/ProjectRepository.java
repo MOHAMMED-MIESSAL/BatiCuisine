@@ -2,6 +2,8 @@ package repository.implimentation;
 
 import config.dbConnection;
 import enums.ProjectStatus;
+import model.Labor;
+import model.Material;
 import model.Project;
 import repository.interfaces.ProjectRepositoryInterface;
 
@@ -10,7 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProjectRepository implements ProjectRepositoryInterface {
     private final Connection connection;
@@ -20,15 +24,27 @@ public class ProjectRepository implements ProjectRepositoryInterface {
     }
 
     @Override
-    public void addProject(Project project) {
-        String query = "INSERT INTO project (name, profit_margin, state_project, total_cost, client_id) VALUES (?, ?, ?::project_status, ?, ?)";
+    public Project addProject(Project project) {
+        String query = "INSERT INTO project (name, profit_margin, state_project, total_cost, client_id) VALUES (?, ?, ?::project_status, ?, ?) RETURNING id";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            setProjectFields(statement, project);
-            statement.executeUpdate();
+            statement.setString(1, project.getName());
+            statement.setDouble(2, project.getProfit_margin() != null ? project.getProfit_margin() : 0.0);
+            statement.setString(3, project.getState_project() != null ? project.getState_project().name() : "InProgress");
+            statement.setDouble(4, project.getTotal_cost() != null ? project.getTotal_cost() : 0.0);
+            statement.setInt(5, project.getClient_id());
+
+            // Exécuter la requête et récupérer l'ID généré
+            ResultSet generatedKeys = statement.executeQuery();
+            if (generatedKeys.next()) {
+                project.setId(generatedKeys.getInt(1)); // Mettre à jour l'ID du projet
+            }
+
         } catch (SQLException e) {
-            logError("Error adding project", e);
+            e.printStackTrace();
         }
+        return project; // Retourner le projet avec l'ID mis à jour
     }
+
 
     @Override
     public Project getProjectById(int id) {
@@ -93,6 +109,68 @@ public class ProjectRepository implements ProjectRepositoryInterface {
         }
         return projects;
     }
+
+    @Override
+    // Get components by project id
+    public Map<String, List<?>> getComponentsByProjectId(int projectId) {
+        Map<String, List<?>> componentsMap = new HashMap<>();
+
+        // Récupérer les matériaux
+        List<Material> materials = new ArrayList<>();
+        String materialQuery = "SELECT * FROM material WHERE project_id = ?";
+        try (PreparedStatement materialStatement = connection.prepareStatement(materialQuery)) {
+            materialStatement.setInt(1, projectId);
+            ResultSet materialResultSet = materialStatement.executeQuery();
+            while (materialResultSet.next()) {
+                // Créer l'objet Material à partir des résultats
+                Material material = new Material(
+                        materialResultSet.getInt("id"),
+                        materialResultSet.getString("name"),
+                        materialResultSet.getDouble("vat_rate"),
+                        materialResultSet.getDouble("unit_cost"),
+                        materialResultSet.getDouble("quantity"),
+                        materialResultSet.getDouble("transport_cost"),
+                        materialResultSet.getDouble("coefficient_quality"),
+                        projectId
+                );
+                materials.add(material);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        componentsMap.put("material", materials);
+
+        // Récupérer les travaux (labors)
+        List<Labor> labors = new ArrayList<>();
+        String laborQuery = "SELECT * FROM labor WHERE project_id = ?";
+        try (PreparedStatement laborStatement = connection.prepareStatement(laborQuery)) {
+            laborStatement.setInt(1, projectId);
+            ResultSet laborResultSet = laborStatement.executeQuery();
+            while (laborResultSet.next()) {
+                // Créer l'objet Labor à partir des résultats
+                Labor labor = new Labor(
+                        laborResultSet.getInt("id"),
+                        laborResultSet.getString("name"),
+                        laborResultSet.getDouble("vat_rate"),
+                        projectId,
+                        laborResultSet.getDouble("hourly_rate"),
+                        laborResultSet.getDouble("hours_work"),
+                        laborResultSet.getDouble("worker_productivity")
+                );
+                labors.add(labor);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        componentsMap.put("labor", labors);
+
+        return componentsMap;
+    }
+
+
+
 
     // Helper method to log errors
     private void logError(String message, SQLException e) {
