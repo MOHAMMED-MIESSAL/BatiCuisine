@@ -1,7 +1,6 @@
 package repository.interfaces;
 
 import model.Estimate;
-
 import java.util.List;
 
 public interface EstimateRepositoryInterface {

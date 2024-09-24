@@ -1,7 +1,6 @@
 package repository.interfaces;
 
 import model.Labor;
-
 import java.util.List;
 
 public interface LaborRepositoryInterface {

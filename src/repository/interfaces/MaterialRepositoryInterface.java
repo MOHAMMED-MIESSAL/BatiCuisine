@@ -1,7 +1,6 @@
 package repository.interfaces;
 
 import model.Material;
-
 import java.util.List;
 
 public interface MaterialRepositoryInterface {

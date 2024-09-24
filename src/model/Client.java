@@ -54,7 +54,6 @@ public class Client {
     }
 
 
-
     // to string
     @Override
     public String toString() {

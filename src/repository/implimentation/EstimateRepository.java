@@ -101,22 +101,11 @@ public class EstimateRepository implements EstimateRepositoryInterface {
         }
     }
 
-
-
     // Helper method to log errors
     private void logError(String message, SQLException e) {
         System.err.println(message + ": " + e.getMessage());
-        // Optional: Use a logging framework like Log4j or SLF4J instead of System.err
     }
 
-    // Helper method to set the fields for an Estimate in a PreparedStatement
-//    private void setEstimateFields(PreparedStatement statement, Estimate estimate) throws SQLException {
-//        statement.setDouble(1, estimate.getAmount_estimate());
-//        statement.setDate(2, estimate.getDate_emission());
-//        statement.setDate(3, estimate.getDate_validity());
-//        statement.setBoolean(4, estimate.isIs_accepted());
-//        statement.setInt(5, estimate.getProject_id());
-//    }
     private void setEstimateFields(PreparedStatement statement, Estimate estimate) throws SQLException {
         statement.setDouble(1, estimate.getAmount_estimate());
         statement.setDate(2, estimate.getDate_emission());
@@ -125,12 +114,11 @@ public class EstimateRepository implements EstimateRepositoryInterface {
         if (estimate.getIs_accepted() != null) {
             statement.setBoolean(4, estimate.getIs_accepted());
         } else {
-            statement.setNull(4, Types.BOOLEAN); // Permet de gérer le cas où is_accepted est null
+            statement.setNull(4, Types.BOOLEAN);
         }
 
         statement.setInt(5, estimate.getProject_id());
     }
-
 
     // Helper method to build an Estimate object from a ResultSet
     private Estimate buildEstimateFromResultSet(ResultSet resultSet) throws SQLException {
