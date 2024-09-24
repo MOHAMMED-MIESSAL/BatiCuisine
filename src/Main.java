@@ -442,9 +442,9 @@ public class Main {
     }
 
     public static void afficherMenuDevis(Scanner scanner, EstimateService estimateService) {
-        System.out.println(CYAN+"\n===============================================");
+        System.out.println(CYAN + "\n===============================================");
         System.out.println("          --- Accepter ou Refuser un Devis ---");
-        System.out.println("===============================================\n"+RESET);
+        System.out.println("===============================================\n" + RESET);
 
         // Validation de l'ID du devis
         int estimateId;
