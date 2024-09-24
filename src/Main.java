@@ -37,7 +37,8 @@ public class Main {
         System.out.println(" 1. 🛠️ Créer un nouveau projet");
         System.out.println(" 2. 📋 Afficher les projets existants");
         System.out.println(" 3. 💰 Calculer le coût d'un projet");
-        System.out.println(" 4. ❌ Quitter");
+        System.out.println(" 4. ✔️ Accepter ou refuser un devis");
+        System.out.println(" 5. ❌ Quitter");
         System.out.println(GREEN + "------------------------------------------------" + RESET);
         System.out.print("Choisissez une option : ");
     }
@@ -173,11 +174,11 @@ public class Main {
             }
         }
         // Create project
-        Project project = new Project(0, name, 0.0, ProjectStatus.InPROGRESS, 0.0, clientId);
+        Project project = new Project(0, name, 0.0, ProjectStatus.PENDING, 0.0, clientId);
         project = projectService.addProject(project);
 
         // Confirm project creation
-        System.out.println(CYAN + "\nProjet créé avec succès !" + RESET);
+        System.out.println(GREEN + "Projet créé avec succès !" + RESET);
 
         return project;
     }
@@ -425,7 +426,7 @@ public class Main {
                     project.getTotal_cost(), // Montant du devis basé sur le coût total
                     dateEmission,
                     dateValidity,
-                    false, // Le devis n'est pas encore accepté par défaut
+                    null,// Le devis n'est pas encore accepté par défaut
                     project.getId() // ID du projet lié
             );
 
@@ -438,6 +439,67 @@ public class Main {
         }
 
         System.out.println(CYAN + "--- Fin du projet ---" + RESET);
+    }
+
+    public static void afficherMenuDevis(Scanner scanner, EstimateService estimateService) {
+        System.out.println(CYAN+"\n===============================================");
+        System.out.println("          --- Accepter ou Refuser un Devis ---");
+        System.out.println("===============================================\n"+RESET);
+
+        // Validation de l'ID du devis
+        int estimateId;
+        while (true) {
+            System.out.print("Entrez l'ID du devis : ");
+            if (scanner.hasNextInt()) {
+                estimateId = scanner.nextInt();
+                scanner.nextLine(); // Consommer la ligne vide
+                break; // ID valide, on sort de la boucle
+            } else {
+                System.out.println(RED + "Erreur : Veuillez entrer un nombre entier pour l'ID." + RESET);
+                scanner.next(); // Consommer l'entrée invalide
+            }
+        }
+
+        // Récupération du devis correspondant à l'ID
+        Estimate estimate = estimateService.getEstimateById(estimateId);
+        if (estimate == null) {
+            System.out.println(RED + "Erreur : Aucun devis trouvé avec l'ID " + estimateId + "." + RESET);
+            return; // Sortir si le devis n'est pas trouvé
+        }
+
+        // Validation de la décision (acceptation ou refus)
+        String decision;
+        while (true) {
+            System.out.print("Souhaitez-vous accepter (a) ou refuser (r) ce devis ? ");
+            decision = scanner.nextLine().trim().toLowerCase();
+            if (decision.equals("a") || decision.equals("r")) {
+                break; // Choix valide, on sort de la boucle
+            } else {
+                System.out.println(RED + "Erreur : Veuillez entrer 'a' pour accepter ou 'r' pour refuser." + RESET);
+            }
+        }
+
+        Project project = projectService.getProjectById(estimate.getProject_id());
+        // Traitement de la décision
+        if (decision.equals("a")) {
+            // Mise à jour pour accepter le devis
+            estimate.setIs_accepted(true);
+            estimateService.updateEstimate(estimateId, estimate);
+            System.out.println(GREEN + "Devis accepté avec succès !" + RESET);
+
+            // Mise a jour du status du projet
+            project.setState_project(ProjectStatus.InPROGRESS);
+
+        } else {
+            // Mise à jour pour refuser le devis (ou autre logique de refus)
+            estimate.setIs_accepted(false);
+            estimateService.updateEstimate(estimateId, estimate);
+            System.out.println(RED + "Devis refusé." + RESET);
+
+            // Mise a jour du status du projet
+            project.setState_project(ProjectStatus.CANCELED);
+        }
+        projectService.updateProject(project.getId(), project);
     }
 
     // Helper method to get yes/no input
@@ -512,6 +574,7 @@ public class Main {
         labelService = new LabelService(labelRepository);
         estimateService = new EstimateService(estimateRepository);
 
+
         Scanner scanner = new Scanner(System.in);
         scanner.useLocale(Locale.US);
         while (true) {
@@ -524,8 +587,8 @@ public class Main {
                     choice = scanner.nextInt();
                     scanner.nextLine(); // Consomme le saut de ligne
 
-                    // Valider que l'entrée est entre 1 et 4
-                    if (choice >= 1 && choice <= 4) {
+                    // Valider que l'entrée est entre 1 et 5
+                    if (choice >= 1 && choice <= 5) {
                         break; // Input valide, on sort de la boucle
                     } else {
                         System.out.println(RED + "Erreur : Veuillez entrer un nombre entre 1 et 4." + RESET);
@@ -601,12 +664,29 @@ public class Main {
                     break;
 
                 case 2:
-                    // Logique pour afficher les projets existants
+                    System.out.println(CYAN + "\n===============================================");
+                    System.out.println("         📋 Liste des Projets Existants        ");
+                    System.out.println("===============================================\n" + RESET);
+
+                    List<Project> projects = projectService.getAllProjects();
+
+                    if (projects.isEmpty()) {
+                        System.out.println(RED + "Aucun projet disponible." + RESET);
+                    } else {
+                        for (Project project : projects) {
+                            Client client = project.getClient(clientService);
+                            System.out.println("Projet ID: " + project.getId() + " | Nom: " + project.getName() + " | Client: " + client.getName() + " | État: " + project.getState_project() + " | Coût total: " + project.getTotal_cost() + " €");
+                        }
+                    }
                     break;
                 case 3:
                     // Logique pour calculer le coût d'un projet
                     break;
                 case 4:
+                    // Logique pour accepter ou refuser un devis
+                    afficherMenuDevis(scanner, estimateService);
+                    break;
+                case 5:
                     System.out.println("👋 Merci d'avoir utilisé notre application. À bientôt !");
                     System.exit(0);
                 default:

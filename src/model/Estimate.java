@@ -5,16 +5,16 @@ import java.sql.Date;
 public class Estimate {
     private int id;
     private double amount_estimate;
-    private boolean is_accepted;
+    private Boolean is_accepted;
     private Date date_emission;
     private Date date_validity;
     private int project_id;
 
-    public Estimate(int id,double amount_estimate, Date date_emission, Date date_validity, boolean is_accepted, int project_id) {
+    public Estimate(int id,double amount_estimate, Date date_emission, Date date_validity, Boolean is_accepted, int project_id) {
+        this.id = id;
         this.amount_estimate = amount_estimate;
         this.date_emission = date_emission;
         this.date_validity = date_validity;
-        this.id = id;
         this.is_accepted = is_accepted;
         this.project_id = project_id;
     }
@@ -49,10 +49,10 @@ public class Estimate {
         this.id = id;
     }
 
-    public boolean isIs_accepted() {
+    public Boolean getIs_accepted() {
         return is_accepted;
     }
-    public void setIs_accepted(boolean is_accepted) {
+    public void setIs_accepted(Boolean is_accepted) {
         this.is_accepted = is_accepted;
     }
 

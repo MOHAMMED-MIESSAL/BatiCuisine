@@ -1,5 +1,6 @@
 -- ENUM for Project Status :
-CREATE TYPE project_status AS ENUM ('InPROGRESS', 'COMPLETED', 'CANCELED');
+CREATE TYPE project_status AS ENUM ('PENDING', 'InPROGRESS', 'COMPLETED', 'CANCELED');
+
 
 
 -- Table client
@@ -60,4 +61,4 @@ CREATE TABLE estimate (
 
 
 ALTER TABLE project
-    ALTER COLUMN state_project SET DEFAULT 'InPROGRESS'::project_status;
+    ALTER COLUMN state_project SET DEFAULT 'PENDING'::project_status;

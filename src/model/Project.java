@@ -1,6 +1,7 @@
 package model;
 
 import enums.ProjectStatus;
+import service.ClientService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +13,7 @@ public class Project {
     private String name;
     private Double profit_margin; // Utilisation de Double pour gérer les valeurs null
     private Double total_cost;    // Utilisation de Double pour gérer les valeurs null
-    private ProjectStatus state_project = ProjectStatus.InPROGRESS; // Valeur par défaut
+    private ProjectStatus state_project = ProjectStatus.PENDING; // Valeur par défaut
     private int client_id;
     // Map to store components with keys "material" and "labor"
     private Map<Class<?>, List<?>> components;
@@ -21,7 +22,7 @@ public class Project {
         this.id = id;
         this.name = name;
         this.profit_margin = (profit_margin != null) ? profit_margin : 0.0;
-        this.state_project = (state_project != null) ? state_project : ProjectStatus.InPROGRESS;
+        this.state_project = (state_project != null) ? state_project : ProjectStatus.PENDING;
         this.total_cost = (total_cost != null) ? total_cost : 0.0;
         this.client_id = client_id;
         this.components = new HashMap<>();
@@ -79,6 +80,17 @@ public class Project {
         this.client_id = client_id;
     }
 
+    // toString
+    @Override
+    public String toString() {
+        return "Project {id=" + id + ", name='" + name + '\'' + ", profitMargin=" + profit_margin +
+                ", totalCost=" + total_cost + ", stateProject='" + state_project + '\'' +
+                ", clientId=" + client_id + '}';
+    }
+
+
+    // ========= Custom methods ============ //
+
     // Generic method to add either Material or Labor
     public <T> void addComponent(T component) {
         List<T> componentList = (List<T>) components.get(component.getClass());
@@ -89,37 +101,15 @@ public class Project {
         }
     }
 
-    // Removing a material
-    public void removeMaterial(Material material) {
-        List<Material> materials = (List<Material>) this.components.get("material");
-        if (materials.remove(material)) {
-            System.out.println("Matériau retiré avec succès !");
-        } else {
-            System.out.println("Matériau non trouvé.");
-        }
-    }
-
-    // Removing labor
-    public void removeLabor(Labor labor) {
-        List<Labor> laborList = (List<Labor>) this.components.get("labor");
-        if (laborList.remove(labor)) {
-            System.out.println("Main-d'œuvre retirée avec succès !");
-        } else {
-            System.out.println("Main-d'œuvre non trouvée.");
-        }
-    }
-
     // Get all components
     public Map<Class<?>, List<?>> getComponents() {
         return components;
     }
 
-
-    // toString
-    @Override
-    public String toString() {
-        return "Project {id=" + id + ", name='" + name + '\'' + ", profitMargin=" + profit_margin +
-                ", totalCost=" + total_cost + ", stateProject='" + state_project + '\'' +
-                ", clientId=" + client_id + '}';
+    // Méthode pour obtenir le client à partir du client_id
+    public Client getClient(ClientService clientService) {
+        return clientService.getClientById(this.client_id);
     }
+
+
 }

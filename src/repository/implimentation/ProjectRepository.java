@@ -29,7 +29,7 @@ public class ProjectRepository implements ProjectRepositoryInterface {
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, project.getName());
             statement.setDouble(2, project.getProfit_margin() != null ? project.getProfit_margin() : 0.0);
-            statement.setString(3, project.getState_project() != null ? project.getState_project().name() : "InProgress");
+            statement.setString(3, project.getState_project() != null ? project.getState_project().name() : "PENDING");
             statement.setDouble(4, project.getTotal_cost() != null ? project.getTotal_cost() : 0.0);
             statement.setInt(5, project.getClient_id());
 
