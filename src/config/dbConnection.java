@@ -10,6 +10,7 @@ public class dbConnection {
     private static dbConnection instance;
     private Connection connection;
 
+
     // URL de connexion à la base de données PostgreSQL
     private static final String URL = "jdbc:postgresql://localhost:5432/batiCuisine";
     private static final String USER = "batiCuisine";
