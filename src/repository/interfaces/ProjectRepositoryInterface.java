@@ -1,7 +1,6 @@
 package repository.interfaces;
 
 import model.Project;
-
 import java.util.List;
 import java.util.Map;
 

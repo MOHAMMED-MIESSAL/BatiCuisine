@@ -40,6 +40,4 @@ public class ProjectService {
         return projectRepository.getComponentsByProjectId(id);
     }
 
-
-
 }

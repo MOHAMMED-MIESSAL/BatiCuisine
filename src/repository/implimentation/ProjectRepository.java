@@ -170,8 +170,6 @@ public class ProjectRepository implements ProjectRepositoryInterface {
     }
 
 
-
-
     // Helper method to log errors
     private void logError(String message, SQLException e) {
         System.err.println(message + ": " + e.getMessage());

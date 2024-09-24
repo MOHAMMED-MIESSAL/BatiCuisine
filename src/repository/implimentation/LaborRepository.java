@@ -107,7 +107,6 @@ public class LaborRepository implements LaborRepositoryInterface {
     // Helper method to log errors
     private void logError(String message, SQLException e) {
         System.err.println(message + ": " + e.getMessage());
-        // Optional: Use a logging framework like Log4j or SLF4J instead of System.err
     }
 
     // Helper method to set the fields for a Labor in a PreparedStatement
