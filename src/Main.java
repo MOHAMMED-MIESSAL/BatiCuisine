@@ -29,16 +29,16 @@ public class Main {
 
     public static void afficherMenu() {
         System.out.println(CYAN + "\n===============================================");
-        System.out.println("  🎉 Bienvenue dans l'application de gestion  ");
+        System.out.println("      Bienvenue dans l'application de gestion  ");
         System.out.println("     des projets de rénovation de cuisines     ");
         System.out.println("===============================================\n" + RESET);
-        System.out.println(GREEN + "              📋 Menu Principal 📋              " + RESET);
+        System.out.println(GREEN + "                Menu Principal                  " + RESET);
         System.out.println(GREEN + "------------------------------------------------" + RESET);
-        System.out.println(" 1. 🛠️ Créer un nouveau projet");
-        System.out.println(" 2. 📋 Afficher les projets existants");
-        System.out.println(" 3. 💰 Calculer le coût d'un projet");
-        System.out.println(" 4. ✔️ Accepter ou refuser un devis");
-        System.out.println(" 5. ❌ Quitter");
+        System.out.println(" 1.   Créer un nouveau projet");
+        System.out.println(" 2.   Afficher les projets existants");
+        System.out.println(" 3.   Calculer le coût d'un projet");
+        System.out.println(" 4.   Accepter ou refuser un devis");
+        System.out.println(" 5.   Quitter");
         System.out.println(GREEN + "------------------------------------------------" + RESET);
         System.out.print("Choisissez une option : ");
     }
@@ -48,10 +48,10 @@ public class Main {
         System.out.println("            --- Recherche de client ---       ");
         System.out.println("Souhaitez-vous chercher un client existant ou en ajouter un nouveau ?");
         System.out.println("===============================================\n" + RESET);
-        System.out.println(GREEN + "              📋 Options 📋              " + RESET);
+        System.out.println(GREEN + "                 Options                 " + RESET);
         System.out.println(GREEN + "-----------------------------------------------" + RESET);
-        System.out.println(" 1. 🔍 Chercher un client existant");
-        System.out.println(" 2. ➕ Ajouter un nouveau client");
+        System.out.println(" 1.    Chercher un client existant");
+        System.out.println(" 2.    Ajouter un nouveau client");
         System.out.println(GREEN + "-----------------------------------------------" + RESET);
         System.out.print("Choisissez une option : ");
     }
@@ -665,7 +665,7 @@ public class Main {
 
                 case 2:
                     System.out.println(CYAN + "\n===============================================");
-                    System.out.println("         📋 Liste des Projets Existants        ");
+                    System.out.println("           Liste des Projets Existants        ");
                     System.out.println("===============================================\n" + RESET);
 
                     List<Project> projects = projectService.getAllProjects();
@@ -687,7 +687,7 @@ public class Main {
                     afficherMenuDevis(scanner, estimateService);
                     break;
                 case 5:
-                    System.out.println("👋 Merci d'avoir utilisé notre application. À bientôt !");
+                    System.out.println("  Merci d'avoir utilisé notre application. À bientôt !");
                     System.exit(0);
                 default:
                     System.out.println("Option invalide. Veuillez réessayer.");
